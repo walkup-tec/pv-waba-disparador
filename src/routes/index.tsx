@@ -452,7 +452,7 @@ function ApiComparison() {
               href={REGISTER_HREF}
               className="block w-full text-center py-3 rounded-xl border border-white/10 text-sm font-semibold hover:bg-white/5 transition-colors"
             >
-              Começar com Oficial
+              Começar Gratuito
             </a>
           </div>
 
