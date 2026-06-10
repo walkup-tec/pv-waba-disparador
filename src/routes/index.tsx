@@ -452,7 +452,7 @@ function ApiComparison() {
               href={REGISTER_HREF}
               className="block w-full text-center py-3 rounded-xl border border-white/10 text-sm font-semibold hover:bg-white/5 transition-colors"
             >
-              Começar com Oficial
+              Começar Gratuito
             </a>
           </div>
 
@@ -472,7 +472,7 @@ function ApiComparison() {
                 </li>
               ))}
             </ul>
-            <CtaButton className="w-full py-3 text-sm">Testar Gratuitamente</CtaButton>
+            <CtaButton className="w-full py-3 text-sm">Começar Gratuito</CtaButton>
           </div>
         </div>
 
