@@ -472,7 +472,7 @@ function ApiComparison() {
                 </li>
               ))}
             </ul>
-            <CtaButton className="w-full py-3 text-sm">Testar Gratuitamente</CtaButton>
+            <CtaButton className="w-full py-3 text-sm">Começar Gratuito</CtaButton>
           </div>
         </div>
 
