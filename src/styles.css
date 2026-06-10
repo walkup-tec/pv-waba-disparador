@@ -4,6 +4,34 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* --------------------------------------------------
+ * Drax brand theme — dark mode SaaS, WhatsApp green
+ * -------------------------------------------------- */
+@theme {
+  --color-brand: #25D366;
+  --color-brand-dark: #128C7E;
+  --color-brand-glow: rgba(37, 211, 102, 0.35);
+  --font-sans: 'Geist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, monospace;
+}
+
+@keyframes drax-float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+@keyframes drax-glow {
+  0%, 100% { opacity: 0.25; }
+  50% { opacity: 0.55; }
+}
+@keyframes drax-fade-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-drax-float { animation: drax-float 6s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
+.animate-drax-glow { animation: drax-glow 4s ease-in-out infinite; }
+.animate-drax-fade-up { animation: drax-fade-up 0.7s cubic-bezier(0.16, 1, 0.3, 1) both; }
+
 /*
  * Design system definition.
  *
