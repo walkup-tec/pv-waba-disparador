@@ -1,21 +1,15 @@
 #!/bin/bash
-# Fix permanente 502 — paginadevendas (VIP Swarm inalcançável no Traefik Easypanel).
-# Uso:
-#   curl -fsSL https://raw.githubusercontent.com/walkup-tec/pv-waba-disparador/main/scripts/traefik-fix-502-paginadevendas.sh -o /root/traefik-fix-paginadevendas.sh
-#   chmod +x /root/traefik-fix-paginadevendas.sh
-#   /root/traefik-fix-paginadevendas.sh install
-#
-# Versão: paginadevendas-traefik-2026-07-06-v1
+# Fix 502 — wabadisparos.com.br → app waba/paginadevendas
 set -euo pipefail
 
-SCRIPT_VERSION="paginadevendas-traefik-2026-07-06-v1"
+SCRIPT_VERSION="paginadevendas-traefik-2026-07-06-v2"
 INSTALL_PATH="/root/traefik-fix-paginadevendas.sh"
 CRON_FILE="/etc/cron.d/traefik-fix-paginadevendas"
 LOG="/var/log/traefik-fix-paginadevendas.log"
 CFG=/etc/easypanel/traefik/config/main.yaml
 
 SWARM_SERVICE="${SWARM_SERVICE:-waba_paginadevendas}"
-CONTAINER_FILTER="${CONTAINER_FILTER:-paginadevendas}"
+CONTAINER_FILTER="${CONTAINER_FILTER:-waba_paginadevendas}"
 PORT="${PORT:-3000}"
 PUBLIC_HOST="${PUBLIC_HOST:-wabadisparos.com.br}"
 EASYPANEL_HOST="${EASYPANEL_HOST:-waba-paginadevendas.achpyp.easypanel.host}"
@@ -29,41 +23,50 @@ app_cid() {
   docker ps -q --filter name="${CONTAINER_FILTER}" --filter status=running | head -1
 }
 
-backend_reachable() {
-  local traefik="$1"
-  docker exec "$traefik" wget -qO- --timeout=5 "${BACKEND_URL}" 2>/dev/null | head -c 80 | grep -qi '<!DOCTYPE\|<html' && return 0
+resolve_backend_url() {
+  local traefik="$1" cid="$2" ip
+  for url in \
+    "${BACKEND_URL}" \
+    "http://${SWARM_SERVICE}:${PORT}/" \
+    "http://tasks.${SWARM_SERVICE}:${PORT}/"; do
+    if docker exec "$traefik" wget -qO- --timeout=5 "$url" 2>/dev/null | head -c 60 | grep -qi '<!DOCTYPE\|<html'; then
+      echo "${url}"
+      return 0
+    fi
+  done
+  if [[ -n "$cid" ]]; then
+    ip=$(docker inspect "$cid" --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' | awk '{print $1}')
+    if [[ -n "$ip" ]] && docker exec "$traefik" wget -qO- --timeout=5 "http://${ip}:${PORT}/" 2>/dev/null | head -c 60 | grep -qi '<!DOCTYPE\|<html'; then
+      echo "http://${ip}:${PORT}/"
+      return 0
+    fi
+  fi
+  echo "${BACKEND_URL}"
   return 1
 }
 
 apply_dnsrr() {
   if docker service ls --format '{{.Name}}' 2>/dev/null | grep -qx "$SWARM_SERVICE"; then
-    echo "Swarm: endpoint-mode dnsrr em ${SWARM_SERVICE}"
-    docker service update --endpoint-mode dnsrr "$SWARM_SERVICE" 2>&1 | tail -3 || true
+    echo "Swarm: dnsrr em ${SWARM_SERVICE}"
+    docker service update --endpoint-mode dnsrr "$SWARM_SERVICE" 2>&1 | tail -2 || true
   fi
 }
 
 patch_main_yaml() {
+  local backend="$1"
   [[ -f "$CFG" ]] || { echo "ERRO: ${CFG} ausente"; return 1; }
-
   cp -a "$CFG" "${CFG}.bak-pv-$(date +%Y%m%d-%H%M%S)"
 
-  python3 - "$CFG" "$BACKEND_URL" "$SWARM_SERVICE" "$PUBLIC_HOST" "$EASYPANEL_HOST" "$PORT" <<'PY'
+  python3 - "$CFG" "$backend" "$SWARM_SERVICE" "$PUBLIC_HOST" "$EASYPANEL_HOST" <<'PY'
 import re, sys
-path, backend, swarm, public_host, ep_host, port = sys.argv[1:7]
+path, backend, swarm, public_host, ep_host = sys.argv[1:6]
 backend = backend.rstrip("/") + "/"
 text = open(path, encoding="utf-8").read()
 
-service_names = {
-    swarm,
-    swarm.replace("_", "-"),
-    f"{swarm}-0",
-    f"{swarm}-1",
-    f"{swarm.replace('_', '-')}-0",
-    f"{swarm.replace('_', '-')}-1",
-}
-
 def set_service_url(name: str) -> int:
     global text
+    if not name:
+        return 0
     pat = rf'("{re.escape(name)}"\s*:\s*\{{[\s\S]*?"url"\s*:\s*")http://[^"]+(")'
     new, n = re.subn(pat, rf'\g<1>{backend}\2', text, count=1)
     if n:
@@ -71,111 +74,127 @@ def set_service_url(name: str) -> int:
         print(f"  service {name} -> {backend}")
     return n
 
-for name in service_names:
-    set_service_url(name)
-
-# Qualquer URL waba_paginadevendas / paginadevendas
-pat = re.compile(r'("url"\s*:\s*")http://(?:tasks\.)?(?:waba[_-])?paginadevendas:\d+/?(")', re.I)
-text, n = pat.subn(rf'\g<1>{backend}\2', text)
-if n:
-    print(f"  urls paginadevendas -> {backend} ({n}x)")
-
-for host in (public_host, ep_host, "paginadevendas", "waba-paginadevendas", "waba_paginadevendas"):
+def services_for_host(host: str) -> list[str]:
     if not host:
+        return []
+    found = []
+    for m in re.finditer(rf'Host\(`{re.escape(host)}`\)', text):
+        start = max(0, m.start() - 200)
+        end = min(len(text), m.end() + 400)
+        window = text[start:end]
+        for sm in re.finditer(r'"service"\s*:\s*"([^"]+)"', window):
+            found.append(sm.group(1))
+    return list(dict.fromkeys(found))
+
+# Serviços ligados aos domínios da landing WABA
+for host in (public_host, ep_host):
+    for svc in services_for_host(host):
+        set_service_url(svc, backend)
+
+# Serviços waba_paginadevendas conhecidos
+for name in {
+    swarm, swarm.replace("_", "-"),
+    f"{swarm}-0", f"{swarm}-1",
+    f"{swarm.replace('_', '-')}-0", f"{swarm.replace('_', '-')}-1",
+}:
+    set_service_url(name, backend)
+
+# Não deixar wabadisparos apontar para typebot_paginadevendas
+for svc in services_for_host(public_host) + services_for_host(ep_host):
+    if "typebot" in svc.lower():
+        set_service_url(svc, backend)
+
+# URLs soltas typebot_paginadevendas nos blocos dos hosts WABA
+for host in (public_host, ep_host):
+    if host not in text:
         continue
-    for wrong in (
-        f"http://{swarm}:{port}",
-        f"http://tasks.{swarm}:80",
-        f"http://{swarm}:80",
-        f"http://waba_paginadevendas:3000",
-        f"http://waba_paginadevendas:80",
-        f"http://waba-paginadevendas:3000",
-    ):
-        text = text.replace(wrong + "/", backend)
-        text = text.replace(wrong, backend.rstrip("/"))
+    idx = text.find(f"Host(`{host}`)")
+    if idx < 0:
+        continue
+    chunk = text[idx:idx + 2500]
+    if "typebot_paginadevendas" in chunk:
+        chunk = re.sub(
+            r'("url"\s*:\s*")http://[^"]+(")',
+            rf'\g<1>{backend}\2',
+            chunk,
+            count=1,
+        )
+        text = text[:idx] + chunk + text[idx + 2500:]
 
 open(path, "w", encoding="utf-8").write(text)
 PY
 
   local traefik
   traefik=$(traefik_container)
-  if [[ -n "$traefik" ]]; then
-    docker kill -s HUP "$traefik" 2>/dev/null || true
-    sleep 2
-  fi
+  [[ -n "$traefik" ]] && docker kill -s HUP "$traefik" 2>/dev/null || true
+  sleep 2
 }
 
 http_code() {
-  curl -sS -o /dev/null -w "%{http_code}" --resolve "${1}:443:127.0.0.1" --max-time 15 \
-    "https://${1}/" 2>/dev/null || echo "000"
+  local host="$1" code
+  code=$(curl -sS -o /dev/null -w "%{http_code}" --max-time 20 "https://${host}/" 2>/dev/null || echo "000")
+  if [[ "$code" == "000" ]]; then
+    code=$(curl -sS -o /dev/null -w "%{http_code}" --resolve "${host}:443:127.0.0.1" --max-time 15 \
+      "https://${host}/" 2>/dev/null || echo "000")
+  fi
+  echo "$code"
 }
 
 run_fix() {
   echo "=== ${SCRIPT_VERSION} $(date -Is) ==="
-  local traefik cid
+  local traefik cid backend
   traefik=$(traefik_container)
   cid=$(app_cid)
 
-  echo "Traefik=${traefik:-?}  App=${cid:-?}  Backend=${BACKEND_URL}"
+  echo "Traefik=${traefik:-?}  App(waba)=${cid:-?}"
 
   if [[ -z "$cid" ]]; then
-    echo "ERRO: container paginadevendas não está running — redeploy no Easypanel"
-    docker ps -a --filter name=paginadevendas --format 'table {{.Names}}\t{{.Status}}' || true
+    echo "ERRO: waba_paginadevendas não está running"
+    docker ps -a --format 'table {{.Names}}\t{{.Status}}' | grep -i paginadevendas || true
     return 1
   fi
 
-  docker logs "$cid" --tail 8 2>&1 || true
+  docker logs "$cid" --tail 5 2>&1 || true
+  [[ -z "$traefik" ]] && { echo "ERRO: Traefik ausente"; return 1; }
 
-  if [[ -z "$traefik" ]]; then
-    echo "ERRO: Traefik ausente"
-    return 1
-  fi
+  apply_dnsrr
+  sleep 12
+  backend=$(resolve_backend_url "$traefik" "$cid" || true)
+  echo "Backend escolhido: ${backend}"
+  patch_main_yaml "$backend"
 
-  if ! backend_reachable "$traefik"; then
-    echo "AVISO: tasks ainda inalcançável — tentando dnsrr"
-    apply_dnsrr
-    sleep 15
-  fi
-
-  patch_main_yaml
+  echo "--- rotas wabadisparos ---"
+  grep -n "wabadisparos\|waba-paginadevendas" "$CFG" | head -20 || true
+  echo "--- urls paginadevendas ---"
+  grep url "$CFG" | grep -i paginadevendas || true
 
   local pub ep
   pub=$(http_code "$PUBLIC_HOST")
   ep=$(http_code "$EASYPANEL_HOST")
-  echo "RESULTADO public=${pub} easypanel=${ep} backend=${BACKEND_URL}"
+  echo "RESULTADO ${PUBLIC_HOST}=${pub}  ${EASYPANEL_HOST}=${ep}"
 
-  if [[ "$pub" != "200" && "$ep" != "200" ]]; then
-    echo "ALERTA: ainda não 200 — verifique Easypanel domínios -> ${BACKEND_URL}"
-    grep url "$CFG" | grep -i paginadevendas || true
-    return 1
-  fi
-  return 0
+  [[ "$pub" == "200" || "$ep" == "200" ]]
 }
 
 install() {
   local self
   self=$(readlink -f "${BASH_SOURCE[0]}")
-  if [[ "$self" != "$INSTALL_PATH" ]]; then
-    cp "$self" "$INSTALL_PATH"
-  fi
+  [[ "$self" != "$INSTALL_PATH" ]] && cp "$self" "$INSTALL_PATH"
   chmod +x "$INSTALL_PATH"
   cat >"$CRON_FILE" <<EOF
-# Reaplica fix VIP Swarm paginadevendas (Easypanel regenera main.yaml)
 */3 * * * * root ${INSTALL_PATH} run >> ${LOG} 2>&1
 EOF
   chmod 644 "$CRON_FILE"
-  apply_dnsrr
   run_fix
-  echo "Instalado: cron ${CRON_FILE} + log ${LOG}"
+  echo "Cron: ${CRON_FILE}"
 }
 
 case "${1:-run}" in
   install) install ;;
   run) run_fix ;;
   diagnose)
-    docker ps -a --filter name=paginadevendas --format 'table {{.Names}}\t{{.Status}}\t{{.Ports}}'
-    T=$(traefik_container)
-    docker exec "$T" wget -S -O /dev/null "${BACKEND_URL}" 2>&1 | head -12 || true
+    docker ps -a --format 'table {{.Names}}\t{{.Status}}' | grep -i paginadevendas || true
+    grep -n "wabadisparos" "$CFG" | head -15 || true
     grep url "$CFG" | grep -i paginadevendas || true
     ;;
   *) echo "Uso: $0 {install|run|diagnose}"; exit 1 ;;
