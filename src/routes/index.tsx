@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import dashboardMockup from "../assets/dashboard-mockup.jpg";
-import draxWabaLogo from "../assets/drax-waba-logo.png";
+import draxBetsLogo from "../assets/drax-bets-logo.png";
 import {
   ShieldCheck,
   Zap,
@@ -177,8 +177,8 @@ function Logo({ size = "md" }: { size?: "sm" | "md" | "nav" }) {
   return (
     <a href="#top" className="flex items-center group">
       <img
-        src={draxWabaLogo}
-        alt="DRAX WABA"
+        src={draxBetsLogo}
+        alt="Drax Bets"
         className={`${height} w-auto`}
         width={width}
         height={imgHeight}
