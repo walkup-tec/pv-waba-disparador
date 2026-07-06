@@ -170,16 +170,18 @@ function Index() {
   );
 }
 
-function Logo({ size = "md" }: { size?: "sm" | "md" }) {
-  const height = size === "sm" ? "h-7" : "h-9";
+function Logo({ size = "md" }: { size?: "sm" | "md" | "nav" }) {
+  const height = size === "sm" ? "h-7" : size === "nav" ? "h-[2.5875rem]" : "h-9";
+  const width = size === "nav" ? 207 : 180;
+  const imgHeight = size === "nav" ? 41 : 36;
   return (
     <a href="#top" className="flex items-center group">
       <img
         src={draxWabaLogo}
         alt="DRAX WABA"
         className={`${height} w-auto`}
-        width={180}
-        height={36}
+        width={width}
+        height={imgHeight}
         decoding="async"
       />
     </a>
@@ -195,7 +197,7 @@ function Header() {
     >
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <div className="flex items-center gap-10">
-          <Logo />
+          <Logo size="nav" />
           <nav className="hidden md:flex gap-7 text-sm font-medium text-white/60">
             <a href="#solucao" className="hover:text-brand transition-colors">Solução</a>
             <a href="#apis" className="hover:text-brand transition-colors">APIs</a>
