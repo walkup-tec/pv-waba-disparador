@@ -7,9 +7,9 @@
 **Repo:** `walkup-tec/pv-waba-disparador` branch `main`
 
 **Status:**
-- `waba-paginadevendas.achpyp.easypanel.host` → **502** (mesmo VIP Swarm que bets_pv)
-- `wabadisparos.com.br` → **sem registro A** no DNS público (8.8.8.8)
-- Fix conhecido: destino Traefik `http://tasks.waba_paginadevendas:3000/`
+- `waba-paginadevendas.achpyp.easypanel.host` → **200 OK** (landing DRAX no ar)
+- `wabadisparos.com.br` → **NXDOMAIN** — NS ainda `a.auto.dns.br` / `b.auto.dns.br`, sem registro A público
+- Traefik: `tasks.waba_paginadevendas:3000` (fix VIP aplicado)
 
 **Próximos passos:**
 1. SSH hotfix Traefik + Easypanel domínios (tasks.*)

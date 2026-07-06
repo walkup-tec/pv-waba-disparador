@@ -90,6 +90,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       {
+        rel: "icon",
+        href: "/favicon.ico",
+        sizes: "any",
+      },
+      {
+        rel: "shortcut icon",
+        href: "/favicon.ico",
+      },
+      {
         rel: "stylesheet",
         href: appCss,
       },
@@ -129,7 +138,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
 
 function RootShell({ children }: { children: ReactNode }) {
   return (
-    <html lang="en">
+    <html lang="pt-BR">
       <head>
         <HeadContent />
       </head>

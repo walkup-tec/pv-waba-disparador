@@ -1,5 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import dashboardMockup from "../assets/dashboard-mockup.jpg";
+import draxWabaLogo from "../assets/drax-waba-logo.png";
 import {
   ShieldCheck,
   Zap,
@@ -170,15 +171,17 @@ function Index() {
 }
 
 function Logo({ size = "md" }: { size?: "sm" | "md" }) {
-  const text = size === "sm" ? "text-lg" : "text-xl";
+  const height = size === "sm" ? "h-7" : "h-9";
   return (
-    <a href="#top" className="flex items-center gap-2 group">
-      <div className="size-8 rounded-lg bg-gradient-to-br from-brand to-brand-dark grid place-items-center font-black text-black text-base shadow-lg shadow-brand/20">
-        D
-      </div>
-      <span className={`${text} font-black tracking-tighter uppercase`}>
-        Drax<span className="text-brand">.</span>
-      </span>
+    <a href="#top" className="flex items-center group">
+      <img
+        src={draxWabaLogo}
+        alt="DRAX WABA"
+        className={`${height} w-auto`}
+        width={180}
+        height={36}
+        decoding="async"
+      />
     </a>
   );
 }
