@@ -48,6 +48,37 @@ WABA_CORS_ORIGINS=https://wabadisparos.com.br,https://www.wabadisparos.com.br
 WABA_APP_LOGIN_URL=https://waba.draxsistemas.com.br/
 ```
 
+## 502 / `Cannot GET /api/errors/bad-gateway`
+
+**Causa:** VIP Swarm (`waba_paginadevendas`) inalcançável pelo Traefik após redeploy.
+
+### Fix permanente no VPS (recomendado)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/walkup-tec/pv-waba-disparador/main/scripts/traefik-fix-502-paginadevendas.sh -o /root/traefik-fix-paginadevendas.sh
+chmod +x /root/traefik-fix-paginadevendas.sh
+/root/traefik-fix-paginadevendas.sh install
+```
+
+O script:
+- Aplica `tasks.waba_paginadevendas:3000` no Traefik
+- Define `endpoint-mode dnsrr` no serviço Swarm
+- Instala cron a cada 3 min (Easypanel regenera `main.yaml`)
+
+### Easypanel (domínios)
+
+Destino interno: `http://tasks.waba_paginadevendas:3000/`
+
+### Manual (hotfix rápido)
+
+```bash
+sed -i 's|http://waba_paginadevendas:3000/|http://tasks.waba_paginadevendas:3000/|g' /etc/easypanel/traefik/config/main.yaml
+sleep 12
+curl -sS -o /dev/null -w "%{http_code}\n" https://wabadisparos.com.br/
+```
+
+**Não** reinicie `easypanel-traefik` com force (reverte o patch).
+
 ## Validar
 
 ```bash

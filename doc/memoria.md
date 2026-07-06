@@ -7,10 +7,8 @@
 **Repo:** `walkup-tec/pv-waba-disparador` branch `main`
 
 **Status:**
-- `waba-paginadevendas.achpyp.easypanel.host` → **200 OK** (landing DRAX no ar)
-- `wabadisparos.com.br` → **NXDOMAIN** — NS ainda `a.auto.dns.br` / `b.auto.dns.br`, sem registro A público
-- Traefik: `tasks.waba_paginadevendas:3000` (fix VIP aplicado)
-- `wabadisparos.com.br` → no ar (DNS + Traefik)
+- Landing no ar intermitente — 502 após redeploy (VIP Swarm)
+- Fix: `scripts/traefik-fix-502-paginadevendas.sh` (cron + dnsrr + tasks.*)
 - Logo header/footer: `DRAX_WABA.png` → `src/assets/drax-waba-logo.png`
 - Favicon: mesmo `favicon.ico` do sistema WABA
 
