@@ -2,7 +2,7 @@
 # Fix 502 — wabadisparos.com.br → app waba/paginadevendas
 set -euo pipefail
 
-SCRIPT_VERSION="paginadevendas-traefik-2026-07-06-v3"
+SCRIPT_VERSION="paginadevendas-traefik-2026-07-06-v3.1"
 INSTALL_PATH="/root/traefik-fix-paginadevendas.sh"
 CRON_FILE="/etc/cron.d/traefik-fix-paginadevendas"
 LOG="/var/log/traefik-fix-paginadevendas.log"
@@ -102,7 +102,7 @@ print(f"  servico OK ({ep_host}): {working_svc}")
 # Domínios públicos → mesmo backend do que funciona
 for host in (public_host, f"www.{public_host}", ep_host):
     for svc in filter(None, [service_for_host(host), working_svc]):
-        set_service_url(svc, backend)
+        set_service_url(svc)
     # Reapontar routers do domínio público para o serviço que funciona
     if working_svc and host in (public_host, f"www.{public_host}"):
         for rname in router_names_for_host(host):
@@ -117,7 +117,7 @@ for name in {
     f"{swarm.replace('_', '-')}-0", f"{swarm.replace('_', '-')}-1",
     working_svc or "",
 }:
-    set_service_url(name, backend)
+    set_service_url(name)
 
 # Qualquer bloco com wabadisparos ainda apontando typebot
 for m in list(re.finditer(r'wabadisparos', text)):
