@@ -10,6 +10,9 @@
 - `waba-paginadevendas.achpyp.easypanel.host` → **200 OK** (landing DRAX no ar)
 - `wabadisparos.com.br` → **NXDOMAIN** — NS ainda `a.auto.dns.br` / `b.auto.dns.br`, sem registro A público
 - Traefik: `tasks.waba_paginadevendas:3000` (fix VIP aplicado)
+- `wabadisparos.com.br` → no ar (DNS + Traefik)
+- Logo header/footer: `DRAX_WABA.png` → `src/assets/drax-waba-logo.png`
+- Favicon: mesmo `favicon.ico` do sistema WABA
 
 **Próximos passos:**
 1. SSH hotfix Traefik + Easypanel domínios (tasks.*)
