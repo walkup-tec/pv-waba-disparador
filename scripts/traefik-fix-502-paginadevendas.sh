@@ -2,7 +2,7 @@
 # Fix 502 — wabadisparos.com.br → app waba/paginadevendas
 set -euo pipefail
 
-SCRIPT_VERSION="paginadevendas-traefik-2026-07-06-v2"
+SCRIPT_VERSION="paginadevendas-traefik-2026-07-06-v3"
 INSTALL_PATH="/root/traefik-fix-paginadevendas.sh"
 CRON_FILE="/etc/cron.d/traefik-fix-paginadevendas"
 LOG="/var/log/traefik-fix-paginadevendas.log"
@@ -74,52 +74,64 @@ def set_service_url(name: str) -> int:
         print(f"  service {name} -> {backend}")
     return n
 
-def services_for_host(host: str) -> list[str]:
+def service_for_host(host: str):
     if not host:
-        return []
-    found = []
+        return None
     for m in re.finditer(rf'Host\(`{re.escape(host)}`\)', text):
-        start = max(0, m.start() - 200)
-        end = min(len(text), m.end() + 400)
-        window = text[start:end]
-        for sm in re.finditer(r'"service"\s*:\s*"([^"]+)"', window):
-            found.append(sm.group(1))
-    return list(dict.fromkeys(found))
+        window = text[m.start(): m.start() + 900]
+        sm = re.search(r'"service"\s*:\s*"([^"]+)"', window)
+        if sm:
+            return sm.group(1)
+    return None
 
-# Serviços ligados aos domínios da landing WABA
-for host in (public_host, ep_host):
-    for svc in services_for_host(host):
+def router_names_for_host(host: str) -> list[str]:
+    names = []
+    for m in re.finditer(rf'Host\(`{re.escape(host)}`\)', text):
+        window = text[max(0, m.start() - 400): m.start() + 100]
+        rm = re.search(r'"([^"]+)"\s*:\s*\{[^}]*Host\(`' + re.escape(host) + r'`\)', window)
+        if not rm:
+            rm = re.search(r'"((?:http|https)-[^"]+)"\s*:\s*\{[\s\S]{0,200}?Host\(`' + re.escape(host) + r'`\)', text[max(0,m.start()-200):m.start()+400])
+        if rm:
+            names.append(rm.group(1))
+    return list(dict.fromkeys(names))
+
+# Serviço que já funciona (easypanel host = 200)
+working_svc = service_for_host(ep_host)
+print(f"  servico OK ({ep_host}): {working_svc}")
+
+# Domínios públicos → mesmo backend do que funciona
+for host in (public_host, f"www.{public_host}", ep_host):
+    for svc in filter(None, [service_for_host(host), working_svc]):
         set_service_url(svc, backend)
+    # Reapontar routers do domínio público para o serviço que funciona
+    if working_svc and host in (public_host, f"www.{public_host}"):
+        for rname in router_names_for_host(host):
+            pat = rf'("{re.escape(rname)}"\s*:\s*\{{[\s\S]*?"service"\s*:\s*")[^"]+(")'
+            text, n = re.subn(pat, rf'\g<1>{working_svc}\2', text, count=1)
+            if n:
+                print(f"  router {rname} ({host}) -> service {working_svc}")
 
-# Serviços waba_paginadevendas conhecidos
 for name in {
     swarm, swarm.replace("_", "-"),
     f"{swarm}-0", f"{swarm}-1",
     f"{swarm.replace('_', '-')}-0", f"{swarm.replace('_', '-')}-1",
+    working_svc or "",
 }:
     set_service_url(name, backend)
 
-# Não deixar wabadisparos apontar para typebot_paginadevendas
-for svc in services_for_host(public_host) + services_for_host(ep_host):
-    if "typebot" in svc.lower():
-        set_service_url(svc, backend)
-
-# URLs soltas typebot_paginadevendas nos blocos dos hosts WABA
-for host in (public_host, ep_host):
-    if host not in text:
-        continue
-    idx = text.find(f"Host(`{host}`)")
-    if idx < 0:
-        continue
-    chunk = text[idx:idx + 2500]
-    if "typebot_paginadevendas" in chunk:
-        chunk = re.sub(
+# Qualquer bloco com wabadisparos ainda apontando typebot
+for m in list(re.finditer(r'wabadisparos', text)):
+    chunk = text[m.start(): m.start() + 2200]
+    if 'typebot_paginadevendas' in chunk or 'http://' in chunk:
+        new_chunk = re.sub(
             r'("url"\s*:\s*")http://[^"]+(")',
             rf'\g<1>{backend}\2',
             chunk,
-            count=1,
+            count=3,
         )
-        text = text[:idx] + chunk + text[idx + 2500:]
+        if new_chunk != chunk:
+            text = text[:m.start()] + new_chunk + text[m.start() + 2200:]
+            print("  bloco wabadisparos: urls corrigidas")
 
 open(path, "w", encoding="utf-8").write(text)
 PY
