@@ -19,27 +19,58 @@ HOST=0.0.0.0
 NODE_ENV=production
 ```
 
-### Domínios — destino interno HTTP
+### Domínios
 
-| Domínio | Destino |
-|---------|---------|
-| `wabadisparos.com.br` | `http://tasks.waba_paginadevendas:3000/` |
-| `www.wabadisparos.com.br` | redirect → apex |
-| `waba-paginadevendas.achpyp.easypanel.host` | `http://tasks.waba_paginadevendas:3000/` |
+| Domínio | Serviço Easypanel |
+|---------|-------------------|
+| `wabadisparos.com.br` | **waba/paginadevendas** (não typebot) |
+| `waba-paginadevendas.achpyp.easypanel.host` | waba/paginadevendas |
 
-> Use `tasks.waba_paginadevendas` se VIP Swarm (`waba_paginadevendas`) retornar 502.
+Destino interno: `http://tasks.waba_paginadevendas:3000/`
 
-### Avançado
+---
 
-- Tempo de inatividade zero: **OFF**
-- Réplicas: **1**
+## 502 Bad Gateway — solução já existente (WABA repo)
 
-## DNS (Hostinger cPanel)
+**Não reinventar.** Usar o mesmo script que corrige `waba.draxsistemas.com.br`:
 
-| Tipo | Nome | Valor |
-|------|------|-------|
-| A | `wabadisparos.com.br` | `72.60.51.127` |
-| A | `www` | `72.60.51.127` |
+- Doc: [FIX-TRAEFIK-WABA.md](https://github.com/walkup-tec/waba/blob/master/doc/FIX-TRAEFIK-WABA.md)
+- Log: `LOG-2026-06-08__traefik-permanent-waba-script-dedicado.md`
+- Script: `walkup-tec/waba` → `scripts/traefik-permanent-waba-vps.sh`
+
+### No VPS (uma linha via wrapper deste repo)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/walkup-tec/pv-waba-disparador/main/scripts/traefik-fix-502-paginadevendas.sh -o /root/traefik-fix-paginadevendas.sh
+chmod +x /root/traefik-fix-paginadevendas.sh
+/root/traefik-fix-paginadevendas.sh run
+```
+
+### Ou manual (mesmo script WABA com variáveis da landing)
+
+```bash
+export WABA_PUBLIC_HOST=wabadisparos.com.br
+export WABA_SWARM_SERVICE=waba_paginadevendas
+export WABA_CONTAINER_FILTER=waba_paginadevendas
+export WABA_EASYPANEL_HOST=waba-paginadevendas.achpyp.easypanel.host
+export WABA_PORT=3000
+export WABA_BACKEND_URL=http://tasks.waba_paginadevendas:3000/
+
+curl -fsSL https://raw.githubusercontent.com/walkup-tec/waba/master/scripts/traefik-permanent-waba-vps.sh -o /tmp/traefik-pv.sh
+sed -i 's/\r$//' /tmp/traefik-pv.sh
+chmod +x /tmp/traefik-pv.sh
+/tmp/traefik-pv.sh run
+```
+
+Esperado: `wabadisparos.com.br: 200`
+
+> **Não** rode `install` do script WABA com outro serviço se já tiver o fix do `waba_disparador` — use só `run` para a landing, ou o wrapper acima.
+
+### Fix definitivo de todo o VPS (WABA + Evolution + guarda main.yaml)
+
+Ver `walkup-tec/waba` → `doc/FIX-TRAEFIK-DEFINITIVO.md` → `/root/traefik-permanent-all-vps.sh install`
+
+---
 
 ## waba_disparador (CORS cadastro)
 
@@ -48,40 +79,8 @@ WABA_CORS_ORIGINS=https://wabadisparos.com.br,https://www.wabadisparos.com.br
 WABA_APP_LOGIN_URL=https://waba.draxsistemas.com.br/
 ```
 
-## 502 / `Cannot GET /api/errors/bad-gateway`
-
-**Causa:** VIP Swarm (`waba_paginadevendas`) inalcançável pelo Traefik após redeploy.
-
-### Fix permanente no VPS (recomendado)
-
-```bash
-curl -fsSL https://raw.githubusercontent.com/walkup-tec/pv-waba-disparador/main/scripts/traefik-fix-502-paginadevendas.sh -o /root/traefik-fix-paginadevendas.sh
-chmod +x /root/traefik-fix-paginadevendas.sh
-/root/traefik-fix-paginadevendas.sh install
-```
-
-O script:
-- Aplica `tasks.waba_paginadevendas:3000` no Traefik
-- Define `endpoint-mode dnsrr` no serviço Swarm
-- Instala cron a cada 3 min (Easypanel regenera `main.yaml`)
-
-### Easypanel (domínios)
-
-Destino interno: `http://tasks.waba_paginadevendas:3000/`
-
-### Manual (hotfix rápido)
-
-```bash
-sed -i 's|http://waba_paginadevendas:3000/|http://tasks.waba_paginadevendas:3000/|g' /etc/easypanel/traefik/config/main.yaml
-sleep 12
-curl -sS -o /dev/null -w "%{http_code}\n" https://wabadisparos.com.br/
-```
-
-**Não** reinicie `easypanel-traefik` com force (reverte o patch).
-
 ## Validar
 
 ```bash
-curl -I https://waba-paginadevendas.achpyp.easypanel.host/
 curl -I https://wabadisparos.com.br/
 ```
