@@ -153,7 +153,11 @@ run_fix() {
 }
 
 install() {
-  cp "$(readlink -f "${BASH_SOURCE[0]}")" "$INSTALL_PATH"
+  local self
+  self=$(readlink -f "${BASH_SOURCE[0]}")
+  if [[ "$self" != "$INSTALL_PATH" ]]; then
+    cp "$self" "$INSTALL_PATH"
+  fi
   chmod +x "$INSTALL_PATH"
   cat >"$CRON_FILE" <<EOF
 # Reaplica fix VIP Swarm paginadevendas (Easypanel regenera main.yaml)
