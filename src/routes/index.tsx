@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import dashboardMockup from "../assets/dashboard-mockup.jpg";
 import draxWabaLogo from "../assets/drax-waba-logo.png";
+import { RegisterForm } from "../components/RegisterForm";
 import {
   ShieldCheck,
   Zap,
@@ -757,23 +758,18 @@ function FinalCta() {
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-brand/10 blur-[140px] rounded-full animate-drax-glow pointer-events-none"
         aria-hidden
       />
-      <div className="max-w-4xl mx-auto px-6 text-center relative">
-        <SectionLabel>Última chamada</SectionLabel>
-        <h2 className="mt-6 text-5xl md:text-7xl font-extrabold tracking-tighter leading-[0.95] text-balance">
-          Comece Hoje Mesmo.
+      <div className="max-w-xl mx-auto px-6 text-center relative">
+        <SectionLabel>Cadastro gratuito</SectionLabel>
+        <h2 className="mt-6 text-4xl md:text-5xl font-extrabold tracking-tighter leading-[0.95] text-balance">
+          Crie sua conta em minutos
         </h2>
-        <p className="mt-6 text-lg md:text-xl text-white/60 max-w-2xl mx-auto">
-          Crie sua conta gratuitamente e tenha acesso à estrutura profissional de disparos WhatsApp
-          que sua empresa merece.
+        <p className="mt-6 text-base md:text-lg text-white/60 max-w-2xl mx-auto">
+          Cadastre-se sem custo. Depois entre no painel, contrate disparos e libere o Aquecedor após
+          cada pagamento.
         </p>
         <div className="mt-10">
-          <CtaButton className="px-12 py-5 text-lg">
-            Criar Conta Gratuitamente <ArrowRight className="size-5" />
-          </CtaButton>
+          <RegisterForm />
         </div>
-        <p className="mt-6 text-xs font-mono uppercase tracking-[0.2em] text-white/30">
-          Setup em menos de 2 minutos · Sem cartão de crédito
-        </p>
       </div>
     </section>
   );
