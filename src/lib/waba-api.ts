@@ -13,3 +13,9 @@ export function resolveWabaApiBaseUrl(): string {
   const fromEnv = String(process.env.WABA_API_URL ?? import.meta.env.VITE_WABA_API_URL ?? "").trim();
   return (fromEnv || DEFAULT_WABA_API_URL).replace(/\/$/, "");
 }
+
+/** Base da API WABA — uso no browser (fallback se o proxy same-origin falhar). */
+export function resolveWabaApiBaseUrlClient(): string {
+  const fromEnv = String(import.meta.env.VITE_WABA_API_URL ?? "").trim();
+  return (fromEnv || DEFAULT_WABA_API_URL).replace(/\/$/, "");
+}
