@@ -2,6 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import dashboardMockup from "../assets/dashboard-mockup.jpg";
 import draxWabaLogo from "../assets/drax-waba-logo.png";
 import { RegisterForm } from "../components/RegisterForm";
+import { PAGINADEVENDAS_DEPLOY_MARKER } from "../lib/deploy-marker";
 import {
   ShieldCheck,
   Zap,
@@ -753,7 +754,11 @@ function Faq() {
 
 function FinalCta() {
   return (
-    <section id="cadastro" className="py-32 border-t border-white/5 relative overflow-hidden">
+    <section
+      id="cadastro"
+      data-deploy-marker={PAGINADEVENDAS_DEPLOY_MARKER}
+      className="py-32 border-t border-white/5 relative overflow-hidden"
+    >
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] bg-brand/10 blur-[140px] rounded-full animate-drax-glow pointer-events-none"
         aria-hidden

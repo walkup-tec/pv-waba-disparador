@@ -11,6 +11,7 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
+import { PAGINADEVENDAS_DEPLOY_MARKER } from "../lib/deploy-marker";
 
 function NotFoundComponent() {
   return (
@@ -80,6 +81,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "Drax — Disparos de WhatsApp em Escala com Máxima Segurança" },
       { name: "description", content: "Plataforma WABA profissional para disparos de WhatsApp em massa com API Oficial e Alternativa. Cadastro gratuito, pague apenas pelos envios a partir de R$ 0,30." },
       { name: "author", content: "Drax" },
+      { name: "waba-deploy-marker", content: PAGINADEVENDAS_DEPLOY_MARKER },
       { property: "og:site_name", content: "DRAX WABA" },
       { property: "og:url", content: "https://wabadisparos.com.br/" },
       { property: "og:type", content: "website" },
