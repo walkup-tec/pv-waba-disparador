@@ -173,9 +173,9 @@ function Index() {
 }
 
 function Logo({ size = "md" }: { size?: "sm" | "md" | "nav" }) {
-  const height = size === "sm" ? "h-7" : size === "nav" ? "h-[2.5875rem]" : "h-9";
-  const width = size === "nav" ? 207 : 180;
-  const imgHeight = size === "nav" ? 41 : 36;
+  const height = size === "sm" ? "h-7" : size === "nav" ? "h-[2.9756rem]" : "h-9";
+  const width = size === "nav" ? 238 : 180;
+  const imgHeight = size === "nav" ? 47 : 36;
   return (
     <a href="#top" className="flex items-center group">
       <img
