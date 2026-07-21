@@ -682,7 +682,7 @@ function SocialProof() {
           ))}
         </div>
 
-        <div className="grid md:grid-cols-3 gap-4 mb-12">
+        <div className="grid md:grid-cols-3 gap-4">
           {testimonials.map((t) => (
             <div
               key={t.n}
@@ -704,17 +704,6 @@ function SocialProof() {
                 </div>
               </div>
             </div>
-          ))}
-        </div>
-
-        <div className="flex flex-wrap items-center justify-center gap-x-12 gap-y-6 opacity-50">
-          {["LOGO 1", "LOGO 2", "LOGO 3", "LOGO 4", "LOGO 5", "LOGO 6"].map((l) => (
-            <span
-              key={l}
-              className="text-sm font-mono tracking-widest text-white/40 uppercase"
-            >
-              {l}
-            </span>
           ))}
         </div>
       </div>
