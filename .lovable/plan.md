@@ -11,7 +11,7 @@ Construir uma landing page única em português (Brasil) para a Drax, plataforma
 5. **API Oficial vs Alternativa** — comparação lado a lado com CTA
 6. **Benefícios** — grid de 9 cards
 7. **Aquecedor gratuito** — bloco destaque com selo "100% Gratuito"
-8. **Transparência de preço** — "Comece Gratuitamente" + "A partir de R$ 0,30/envio" (sem planos)
+8. **Transparência de preço** — "Comece Gratuitamente" + "A partir de R$ 0,25/envio" (sem planos)
 9. **Prova social** — placeholders profissionais (logos, depoimentos, métricas)
 10. **FAQ** — accordion com 8 perguntas
 11. **CTA Final** — "Comece Hoje Mesmo" full-width
