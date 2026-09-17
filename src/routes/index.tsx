@@ -59,7 +59,7 @@ const faqs = [
   },
   {
     q: "Quanto custa exatamente cada envio?",
-    a: "O valor parte de R$ 0,25 por envio, podendo reduzir conforme o volume de créditos adquiridos em pacotes maiores. Tudo transparente, sem taxas ocultas.",
+    a: "O valor parte de R$ 0,29 por envio, podendo reduzir conforme o volume de créditos adquiridos em pacotes maiores. Tudo transparente, sem taxas ocultas.",
   },
 ];
 
@@ -70,7 +70,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          "Plataforma WABA profissional para disparos de WhatsApp em massa com API Oficial e Alternativa. Cadastro gratuito, pague apenas pelos envios a partir de R$ 0,25.",
+          "Plataforma WABA profissional para disparos de WhatsApp em massa com API Oficial e Alternativa. Cadastro gratuito, pague apenas pelos envios a partir de R$ 0,29.",
       },
       {
         name: "keywords",
@@ -612,7 +612,7 @@ function Pricing() {
           </p>
           <div className="flex items-baseline justify-center gap-2">
             <span className="text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark tracking-tight">
-              R$ 0,25
+              R$ 0,29
             </span>
             <span className="text-2xl text-white/40 font-medium">/ envio</span>
           </div>
