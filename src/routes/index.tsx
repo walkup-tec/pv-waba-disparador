@@ -3,6 +3,7 @@ import dashboardMockup from "../assets/dashboard-mockup.jpg";
 import draxWabaLogo from "../assets/drax-waba-logo.png";
 import { RegisterForm } from "../components/RegisterForm";
 import { PAGINADEVENDAS_DEPLOY_MARKER } from "../lib/deploy-marker";
+import { fetchOfficialFromPrice, SALE_PRICING_FALLBACK_FROM } from "../lib/waba-public-pricing";
 import {
   ShieldCheck,
   Zap,
@@ -28,49 +29,57 @@ import {
   Plus,
 } from "lucide-react";
 
-const faqs = [
-  {
-    q: "O cadastro é realmente gratuito?",
-    a: "Sim. Você cria sua conta na plataforma sem nenhum custo, sem cartão de crédito e sem mensalidade. A cobrança só acontece quando você decidir realizar envios.",
-  },
-  {
-    q: "Qual a diferença entre API Oficial e API Alternativa?",
-    a: "A API Oficial é homologada pela Meta, oferece selo verificado e máxima credibilidade institucional. A API Alternativa oferece implantação imediata, maior flexibilidade e custo-benefício agressivo para operações de alto volume.",
-  },
-  {
-    q: "Como funciona a cobrança?",
-    a: "Você trabalha com créditos pré-pagos. Carrega o valor que quiser na sua conta e o saldo é debitado conforme os envios são realizados. Sem fidelidade, sem mensalidade.",
-  },
-  {
-    q: "Posso utilizar meu número atual?",
-    a: "Sim. Em ambos os modelos é possível conectar números existentes, respeitando os protocolos técnicos de cada tecnologia. Recomendamos usar números dedicados para os disparos.",
-  },
-  {
-    q: "O sistema possui suporte?",
-    a: "Sim. Todos os clientes têm acesso ao suporte técnico especializado via WhatsApp para auxiliar na configuração, integração e estratégia de envios.",
-  },
-  {
-    q: "Como funciona o aquecimento gratuito?",
-    a: "Ao realizar a primeira compra de créditos, você libera automaticamente o acesso ao sistema de aquecimento. A ferramenta simula conversas reais entre números para aumentar a reputação da conta antes dos disparos em massa.",
-  },
-  {
-    q: "Existe fidelidade ou contrato?",
-    a: "Nenhuma. O modelo é 100% pré-pago. Use a plataforma quando precisar, no volume que precisar, sem multas ou prazos mínimos.",
-  },
-  {
-    q: "Quanto custa exatamente cada envio?",
-    a: "O valor parte de R$ 0,29 por envio, podendo reduzir conforme o volume de créditos adquiridos em pacotes maiores. Tudo transparente, sem taxas ocultas.",
-  },
-];
+function buildFaqs(fromLabel: string) {
+  return [
+    {
+      q: "O cadastro é realmente gratuito?",
+      a: "Sim. Você cria sua conta na plataforma sem nenhum custo, sem cartão de crédito e sem mensalidade. A cobrança só acontece quando você decidir realizar envios.",
+    },
+    {
+      q: "Qual a diferença entre API Oficial e API Alternativa?",
+      a: "A API Oficial é homologada pela Meta, oferece selo verificado e máxima credibilidade institucional. A API Alternativa oferece implantação imediata, maior flexibilidade e custo-benefício agressivo para operações de alto volume.",
+    },
+    {
+      q: "Como funciona a cobrança?",
+      a: "Você trabalha com créditos pré-pagos. Carrega o valor que quiser na sua conta e o saldo é debitado conforme os envios são realizados. Sem fidelidade, sem mensalidade.",
+    },
+    {
+      q: "Posso utilizar meu número atual?",
+      a: "Sim. Em ambos os modelos é possível conectar números existentes, respeitando os protocolos técnicos de cada tecnologia. Recomendamos usar números dedicados para os disparos.",
+    },
+    {
+      q: "O sistema possui suporte?",
+      a: "Sim. Todos os clientes têm acesso ao suporte técnico especializado via WhatsApp para auxiliar na configuração, integração e estratégia de envios.",
+    },
+    {
+      q: "Como funciona o aquecimento gratuito?",
+      a: "Ao realizar a primeira compra de créditos, você libera automaticamente o acesso ao sistema de aquecimento. A ferramenta simula conversas reais entre números para aumentar a reputação da conta antes dos disparos em massa.",
+    },
+    {
+      q: "Existe fidelidade ou contrato?",
+      a: "Nenhuma. O modelo é 100% pré-pago. Use a plataforma quando precisar, no volume que precisar, sem multas ou prazos mínimos.",
+    },
+    {
+      q: "Quanto custa exatamente cada envio?",
+      a: `O valor parte de ${fromLabel} por envio, podendo reduzir conforme o volume de créditos adquiridos em pacotes maiores. Tudo transparente, sem taxas ocultas.`,
+    },
+  ];
+}
 
 export const Route = createFileRoute("/")({
-  head: () => ({
+  loader: async () => ({
+    fromLabel: await fetchOfficialFromPrice("outros"),
+  }),
+  head: ({ loaderData }) => {
+    const fromLabel = loaderData?.fromLabel || SALE_PRICING_FALLBACK_FROM;
+    const faqs = buildFaqs(fromLabel);
+    return {
     meta: [
       { title: "Drax — Disparos de WhatsApp em Escala com Máxima Segurança" },
       {
         name: "description",
         content:
-          "Plataforma WABA profissional para disparos de WhatsApp em massa com API Oficial e Alternativa. Cadastro gratuito, pague apenas pelos envios a partir de R$ 0,29.",
+          `Plataforma WABA profissional para disparos de WhatsApp em massa com API Oficial e Alternativa. Cadastro gratuito, pague apenas pelos envios a partir de ${fromLabel}.`,
       },
       {
         name: "keywords",
@@ -101,7 +110,8 @@ export const Route = createFileRoute("/")({
         }),
       },
     ],
-  }),
+  };
+  },
   component: Index,
 });
 
@@ -594,6 +604,7 @@ function Warmer() {
 }
 
 function Pricing() {
+  const { fromLabel } = Route.useLoaderData();
   return (
     <section id="preco" className="py-24 border-t border-white/5">
       <div className="max-w-4xl mx-auto px-6 text-center">
@@ -612,7 +623,7 @@ function Pricing() {
           </p>
           <div className="flex items-baseline justify-center gap-2">
             <span className="text-7xl md:text-8xl font-black text-transparent bg-clip-text bg-gradient-to-r from-brand to-brand-dark tracking-tight">
-              R$ 0,29
+              {fromLabel}
             </span>
             <span className="text-2xl text-white/40 font-medium">/ envio</span>
           </div>
@@ -712,6 +723,8 @@ function SocialProof() {
 }
 
 function Faq() {
+  const { fromLabel } = Route.useLoaderData();
+  const faqs = buildFaqs(fromLabel);
   return (
     <section id="faq" className="py-24 border-t border-white/5">
       <div className="max-w-3xl mx-auto px-6">
