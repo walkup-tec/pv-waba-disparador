@@ -184,9 +184,9 @@ function Index() {
 
 function Logo({ size = "md" }: { size?: "sm" | "md" | "nav" | "footer" }) {
   const height =
-    size === "sm" ? "h-7" : size === "nav" ? "h-[2.9756rem]" : size === "footer" ? "h-[2.7rem]" : "h-9";
-  const width = size === "nav" ? 238 : size === "footer" ? 216 : 180;
-  const imgHeight = size === "nav" ? 47 : size === "footer" ? 43 : 36;
+    size === "sm" ? "h-7" : size === "nav" ? "h-[2.9756rem]" : size === "footer" ? "h-[3.24rem]" : "h-9";
+  const width = size === "nav" ? 238 : size === "footer" ? 259 : 180;
+  const imgHeight = size === "nav" ? 47 : size === "footer" ? 52 : 36;
   return (
     <a href="#top" className="flex items-center group">
       <img
