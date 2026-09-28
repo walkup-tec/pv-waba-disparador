@@ -27,6 +27,12 @@ import {
   Rocket,
   Star,
   Plus,
+  BadgeCheck,
+  LayoutTemplate,
+  MousePointerClick,
+  MailOpen,
+  Activity,
+  Smartphone,
 } from "lucide-react";
 
 function buildFaqs(fromLabel: string) {
@@ -423,47 +429,107 @@ function Solution() {
 }
 
 function ApiComparison() {
-  const oficial = [
-    "Maior credibilidade institucional",
-    "Conta verificada pela Meta",
-    "Operação 100% empresarial",
-    "Recursos oficiais nativos (botões, listas)",
+  const stats = [
+    { k: "Check verde", v: "Conta comercial visível na conversa" },
+    { k: "Templates", v: "Marketing, utilidade e autenticação" },
+    { k: "Recibos Meta", v: "Entrega e leitura via Cloud API" },
+    { k: "Quality Rating", v: "Nota de qualidade no Manager" },
+  ];
+  const features = [
+    {
+      icon: BadgeCheck,
+      title: "Conta verificada pela Meta",
+      desc: "WABA homologada, com nome comercial e selo institucional na conversa.",
+    },
+    {
+      icon: LayoutTemplate,
+      title: "Templates aprovados",
+      desc: "Único formato liberado pela Meta para disparo fora da janela de 24 horas.",
+    },
+    {
+      icon: MousePointerClick,
+      title: "Botões e listas nativos",
+      desc: "CTA de URL, resposta rápida e listas oficiais do WhatsApp — sem gambiarra.",
+    },
+    {
+      icon: MailOpen,
+      title: "Entrega e leitura oficiais",
+      desc: "Status delivered e read chegam no webhook da Graph, não por print de conversa.",
+    },
+    {
+      icon: Activity,
+      title: "Quality Rating da WABA",
+      desc: "Você acompanha a nota do número e do template e corrige antes de perder limite.",
+    },
+    {
+      icon: Smartphone,
+      title: "Fora do WhatsApp pessoal",
+      desc: "O disparo roda em Cloud API isolada. O chip de atendimento da empresa não entra na escala.",
+    },
+    {
+      icon: ShieldCheck,
+      title: "Mídia no template oficial",
+      desc: "Cabeçalho com imagem, vídeo ou documento no formato que a Meta aceita no disparo.",
+    },
+    {
+      icon: BarChart3,
+      title: "Relatório com dados da Meta",
+      desc: "Envio, entrega, leitura e qualidade no mesmo painel da operação.",
+    },
   ];
   return (
     <section id="apis" className="py-24 border-t border-white/5">
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="text-center max-w-2xl mx-auto mb-16">
-          <SectionLabel>API Oficial</SectionLabel>
-          <h2 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-balance">
-            Disparos com a API Oficial da Meta.
-          </h2>
-          <p className="mt-4 text-white/50 text-lg">
-            WABA homologada. Credibilidade institucional e operação empresarial em um único motor.
-          </p>
-        </div>
-
-        <div className="max-w-xl mx-auto rounded-3xl overflow-hidden border border-brand/25 bg-gradient-to-b from-brand/[0.08] to-[#0a0a0a] p-10">
-          <div className="flex items-center gap-3 mb-6">
-            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-brand px-2.5 py-1 rounded bg-brand/10 border border-brand/20">
-              Enterprise
-            </span>
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+          <div className="lg:col-span-5 lg:sticky lg:top-28">
+            <SectionLabel>API Oficial</SectionLabel>
+            <h2 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-balance leading-[1.1]">
+              Disparos com a API Oficial da Meta.
+            </h2>
+            <p className="mt-5 text-white/55 text-lg leading-relaxed">
+              Cloud API da WhatsApp Business Platform: templates revisados, mensagens interativas e
+              recibos de entrega e leitura pela Graph. Sem misturar com o WhatsApp de atendimento.
+            </p>
+            <div className="hidden lg:block mt-8">
+              <CtaButton className="px-8 py-4">
+                Começar Gratuito <ArrowRight className="size-4" />
+              </CtaButton>
+            </div>
           </div>
-          <h3 className="text-2xl font-bold mb-2">API Oficial</h3>
-          <p className="text-sm text-white/50 mb-8">WABA homologada pela Meta.</p>
-          <ul className="space-y-3 mb-10">
-            {oficial.map((i) => (
-              <li key={i} className="flex items-center gap-3 text-sm text-white/80">
-                <div className="size-1.5 rounded-full bg-brand shrink-0" />
-                {i}
-              </li>
-            ))}
-          </ul>
-          <CtaButton className="w-full py-3 text-sm">Começar Gratuito</CtaButton>
+
+          <div className="lg:col-span-7 space-y-4">
+            <div className="grid grid-cols-2 gap-3">
+              {stats.map((s) => (
+                <div
+                  key={s.k}
+                  className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4"
+                >
+                  <div className="text-sm font-bold text-brand">{s.k}</div>
+                  <div className="mt-1 text-xs text-white/45 leading-relaxed">{s.v}</div>
+                </div>
+              ))}
+            </div>
+
+            <div className="grid sm:grid-cols-2 gap-3">
+              {features.map(({ icon: Icon, title, desc }) => (
+                <div
+                  key={title}
+                  className="group rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent p-5 hover:border-brand/30 hover:from-brand/[0.06] transition-colors"
+                >
+                  <div className="size-10 rounded-xl bg-brand/10 grid place-items-center mb-4 group-hover:bg-brand/20 transition-colors">
+                    <Icon className="size-5 text-brand" strokeWidth={1.75} />
+                  </div>
+                  <h3 className="text-base font-bold mb-1.5">{title}</h3>
+                  <p className="text-sm text-white/50 leading-relaxed">{desc}</p>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="mt-10 text-center">
-          <CtaButton className="px-8 py-4">
-            Criar Conta Gratuitamente <ArrowRight className="size-4" />
+        <div className="lg:hidden mt-10">
+          <CtaButton className="w-full py-4">
+            Começar Gratuito <ArrowRight className="size-4" />
           </CtaButton>
         </div>
       </div>
