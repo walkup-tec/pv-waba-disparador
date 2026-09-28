@@ -27,11 +27,9 @@ import {
   Rocket,
   Star,
   Plus,
-  BadgeCheck,
   LayoutTemplate,
   MousePointerClick,
   MailOpen,
-  Activity,
   Smartphone,
 } from "lucide-react";
 
@@ -43,7 +41,7 @@ function buildFaqs(fromLabel: string) {
     },
     {
       q: "Qual API vocês utilizam?",
-      a: "Trabalhamos com a API Oficial da Meta (WABA), com conta verificada, selo institucional e recursos nativos da plataforma.",
+      a: "Trabalhamos com a API Oficial da Meta (WABA) e recursos nativos da plataforma.",
     },
     {
       q: "Como funciona a cobrança?",
@@ -429,18 +427,7 @@ function Solution() {
 }
 
 function ApiComparison() {
-  const stats = [
-    { k: "Check verde", v: "Conta comercial visível na conversa" },
-    { k: "Templates", v: "Marketing, utilidade e autenticação" },
-    { k: "Recibos Meta", v: "Entrega e leitura via Cloud API" },
-    { k: "Quality Rating", v: "Nota de qualidade no Manager" },
-  ];
   const features = [
-    {
-      icon: BadgeCheck,
-      title: "Conta verificada pela Meta",
-      desc: "WABA homologada, com nome comercial e selo institucional na conversa.",
-    },
     {
       icon: LayoutTemplate,
       title: "Templates aprovados",
@@ -457,11 +444,6 @@ function ApiComparison() {
       desc: "Status delivered e read chegam no webhook da Graph, não por print de conversa.",
     },
     {
-      icon: Activity,
-      title: "Quality Rating da WABA",
-      desc: "Você acompanha a nota do número e do template e corrige antes de perder limite.",
-    },
-    {
       icon: Smartphone,
       title: "Fora do WhatsApp pessoal",
       desc: "O disparo roda em Cloud API isolada. O chip de atendimento da empresa não entra na escala.",
@@ -474,7 +456,7 @@ function ApiComparison() {
     {
       icon: BarChart3,
       title: "Relatório com dados da Meta",
-      desc: "Envio, entrega, leitura e qualidade no mesmo painel da operação.",
+      desc: "Envio, entrega e leitura no mesmo painel da operação.",
     },
   ];
   return (
@@ -497,19 +479,7 @@ function ApiComparison() {
             </div>
           </div>
 
-          <div className="lg:col-span-7 space-y-4">
-            <div className="grid grid-cols-2 gap-3">
-              {stats.map((s) => (
-                <div
-                  key={s.k}
-                  className="rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-4"
-                >
-                  <div className="text-sm font-bold text-brand">{s.k}</div>
-                  <div className="mt-1 text-xs text-white/45 leading-relaxed">{s.v}</div>
-                </div>
-              ))}
-            </div>
-
+          <div className="lg:col-span-7">
             <div className="grid sm:grid-cols-2 gap-3">
               {features.map(({ icon: Icon, title, desc }) => (
                 <div
