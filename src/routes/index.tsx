@@ -427,7 +427,13 @@ function Solution() {
 }
 
 function ApiComparison() {
-  const features = [
+  const features: {
+    icon: typeof TrendingUp;
+    title: string;
+    desc: string;
+    items?: string[];
+    footer?: string;
+  }[] = [
     {
       icon: LayoutTemplate,
       title: "Templates oficiais META",
@@ -453,6 +459,13 @@ function ApiComparison() {
       title: "Relatório com dados da Meta",
       desc: "Envio, entrega e leitura no mesmo painel da operação.",
     },
+    {
+      icon: TrendingUp,
+      title: "Indicadores completos",
+      desc: "Somos a única empresa do Brasil capaz de informar:",
+      items: ["Mensagens entregues", "Mensagens lidas", "Cliques no botão"],
+      footer: "Com gráficos e análise de conversão",
+    },
   ];
   return (
     <section id="apis" className="py-24 border-t border-white/5">
@@ -476,7 +489,7 @@ function ApiComparison() {
 
           <div className="lg:col-span-7">
             <div className="grid sm:grid-cols-2 gap-3">
-              {features.map(({ icon: Icon, title, desc }) => (
+              {features.map(({ icon: Icon, title, desc, items, footer }) => (
                 <div
                   key={title}
                   className="group rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent p-5 hover:border-brand/30 hover:from-brand/[0.06] transition-colors"
@@ -486,6 +499,19 @@ function ApiComparison() {
                   </div>
                   <h3 className="text-base font-bold mb-1.5">{title}</h3>
                   <p className="text-sm text-white/50 leading-relaxed">{desc}</p>
+                  {items ? (
+                    <ul className="mt-2 space-y-1 text-sm text-white/55">
+                      {items.map((item) => (
+                        <li key={item} className="flex gap-2 leading-relaxed">
+                          <span className="text-brand shrink-0">•</span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  ) : null}
+                  {footer ? (
+                    <p className="mt-2 text-sm text-white/50 leading-relaxed">{footer}</p>
+                  ) : null}
                 </div>
               ))}
             </div>
