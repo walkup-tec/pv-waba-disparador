@@ -36,8 +36,8 @@ function buildFaqs(fromLabel: string) {
       a: "Sim. Você cria sua conta na plataforma sem nenhum custo, sem cartão de crédito e sem mensalidade. A cobrança só acontece quando você decidir realizar envios.",
     },
     {
-      q: "Qual a diferença entre API Oficial e API Alternativa?",
-      a: "A API Oficial é homologada pela Meta, oferece selo verificado e máxima credibilidade institucional. A API Alternativa oferece implantação imediata, maior flexibilidade e custo-benefício agressivo para operações de alto volume.",
+      q: "Qual API vocês utilizam?",
+      a: "Trabalhamos com a API Oficial da Meta (WABA), com conta verificada, selo institucional e recursos nativos da plataforma.",
     },
     {
       q: "Como funciona a cobrança?",
@@ -45,7 +45,7 @@ function buildFaqs(fromLabel: string) {
     },
     {
       q: "Posso utilizar meu número atual?",
-      a: "Sim. Em ambos os modelos é possível conectar números existentes, respeitando os protocolos técnicos de cada tecnologia. Recomendamos usar números dedicados para os disparos.",
+      a: "Sim. É possível conectar números existentes na API Oficial da Meta. Recomendamos usar números dedicados para os disparos.",
     },
     {
       q: "O sistema possui suporte?",
@@ -61,7 +61,7 @@ function buildFaqs(fromLabel: string) {
     },
     {
       q: "Quanto custa exatamente cada envio?",
-      a: `O valor parte de ${fromLabel} por envio, podendo reduzir conforme o volume de créditos adquiridos em pacotes maiores. Tudo transparente, sem taxas ocultas.`,
+      a: `O valor parte de ${fromLabel} por envio, podendo reduzir conforme o volume de créditos adquiridos em pacotes maiores. Para nicho Black, solicite mais informações.`,
     },
   ];
 }
@@ -79,7 +79,7 @@ export const Route = createFileRoute("/")({
       {
         name: "description",
         content:
-          `Plataforma WABA profissional para disparos de WhatsApp em massa com API Oficial e Alternativa. Cadastro gratuito, pague apenas pelos envios a partir de ${fromLabel}.`,
+          `Plataforma WABA profissional para disparos de WhatsApp em massa com API Oficial. Cadastro gratuito, pague apenas pelos envios a partir de ${fromLabel}.`,
       },
       {
         name: "keywords",
@@ -90,7 +90,7 @@ export const Route = createFileRoute("/")({
       {
         property: "og:description",
         content:
-          "API Oficial e Alternativa para campanhas em massa no WhatsApp. Cadastro gratuito, sem mensalidade.",
+          "API Oficial da Meta para campanhas em massa no WhatsApp. Cadastro gratuito, sem mensalidade.",
       },
       { property: "og:url", content: "/" },
       { property: "og:type", content: "website" },
@@ -182,10 +182,11 @@ function Index() {
   );
 }
 
-function Logo({ size = "md" }: { size?: "sm" | "md" | "nav" }) {
-  const height = size === "sm" ? "h-7" : size === "nav" ? "h-[2.9756rem]" : "h-9";
-  const width = size === "nav" ? 238 : 180;
-  const imgHeight = size === "nav" ? 47 : 36;
+function Logo({ size = "md" }: { size?: "sm" | "md" | "nav" | "footer" }) {
+  const height =
+    size === "sm" ? "h-7" : size === "nav" ? "h-[2.9756rem]" : size === "footer" ? "h-[2.7rem]" : "h-9";
+  const width = size === "nav" ? 238 : size === "footer" ? 216 : 180;
+  const imgHeight = size === "nav" ? 47 : size === "footer" ? 43 : 36;
   return (
     <a href="#top" className="flex items-center group">
       <img
@@ -212,7 +213,7 @@ function Header() {
           <Logo size="nav" />
           <nav className="hidden md:flex gap-7 text-sm font-medium text-white/60">
             <a href="#solucao" className="hover:text-brand transition-colors">Solução</a>
-            <a href="#apis" className="hover:text-brand transition-colors">APIs</a>
+            <a href="#apis" className="hover:text-brand transition-colors">API Oficial</a>
             <a href="#beneficios" className="hover:text-brand transition-colors">Benefícios</a>
             <a href="#preco" className="hover:text-brand transition-colors">Preço</a>
             <a href="#faq" className="hover:text-brand transition-colors">FAQ</a>
@@ -228,7 +229,6 @@ function Hero() {
   const heroBadges = [
     "Cadastro Gratuito",
     "API Oficial",
-    "API Alternativa",
     "Alta Escalabilidade",
     "Envio Profissional",
     "Plataforma Intuitiva",
@@ -251,7 +251,7 @@ function Hero() {
             </span>
           </h1>
           <p className="text-lg md:text-xl text-white/60 max-w-2xl mx-auto leading-relaxed text-pretty">
-            Utilize API Oficial ou API Alternativa para realizar campanhas em massa sem comprometer
+            Utilize a API Oficial da Meta para realizar campanhas em massa sem comprometer
             o WhatsApp utilizado no atendimento da sua empresa.
           </p>
           <div className="flex flex-wrap justify-center gap-2 pt-2">
@@ -429,68 +429,36 @@ function ApiComparison() {
     "Operação 100% empresarial",
     "Recursos oficiais nativos (botões, listas)",
   ];
-  const alternativa = [
-    "Implantação imediata, sem burocracia",
-    "Flexibilidade operacional total",
-    "Excelente custo-benefício",
-    "Alta performance em volume",
-  ];
   return (
     <section id="apis" className="py-24 border-t border-white/5">
       <div className="max-w-6xl mx-auto px-6">
         <div className="text-center max-w-2xl mx-auto mb-16">
-          <SectionLabel>API Oficial vs Alternativa</SectionLabel>
+          <SectionLabel>API Oficial</SectionLabel>
           <h2 className="mt-4 text-3xl md:text-5xl font-bold tracking-tight text-balance">
-            Escolha o motor ideal para o seu momento.
+            Disparos com a API Oficial da Meta.
           </h2>
           <p className="mt-4 text-white/50 text-lg">
-            Duas tecnologias robustas para diferentes estratégias. Você decide. Nós entregamos.
+            WABA homologada. Credibilidade institucional e operação empresarial em um único motor.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-px bg-white/10 rounded-3xl overflow-hidden border border-white/10">
-          <div className="bg-[#0a0a0a] p-10">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-blue-400 px-2.5 py-1 rounded bg-blue-500/10 border border-blue-500/20">
-                Enterprise
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold mb-2">API Oficial</h3>
-            <p className="text-sm text-white/50 mb-8">WABA homologada pela Meta.</p>
-            <ul className="space-y-3 mb-10">
-              {oficial.map((i) => (
-                <li key={i} className="flex items-center gap-3 text-sm text-white/80">
-                  <div className="size-1.5 rounded-full bg-brand shrink-0" />
-                  {i}
-                </li>
-              ))}
-            </ul>
-            <a
-              href={REGISTER_HREF}
-              className="block w-full text-center py-3 rounded-xl border border-white/10 text-sm font-semibold hover:bg-white/5 transition-colors"
-            >
-              Começar Gratuito
-            </a>
+        <div className="max-w-xl mx-auto rounded-3xl overflow-hidden border border-brand/25 bg-gradient-to-b from-brand/[0.08] to-[#0a0a0a] p-10">
+          <div className="flex items-center gap-3 mb-6">
+            <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-brand px-2.5 py-1 rounded bg-brand/10 border border-brand/20">
+              Enterprise
+            </span>
           </div>
-
-          <div className="bg-gradient-to-b from-brand/[0.08] to-[#0a0a0a] p-10 relative">
-            <div className="flex items-center gap-3 mb-6">
-              <span className="text-[10px] font-mono uppercase tracking-[0.2em] text-brand px-2.5 py-1 rounded bg-brand/10 border border-brand/20">
-                Performance
-              </span>
-            </div>
-            <h3 className="text-2xl font-bold mb-2">API Alternativa</h3>
-            <p className="text-sm text-white/50 mb-8">Para escala rápida com flexibilidade.</p>
-            <ul className="space-y-3 mb-10">
-              {alternativa.map((i) => (
-                <li key={i} className="flex items-center gap-3 text-sm text-white/80">
-                  <div className="size-1.5 rounded-full bg-brand shrink-0" />
-                  {i}
-                </li>
-              ))}
-            </ul>
-            <CtaButton className="w-full py-3 text-sm">Começar Gratuito</CtaButton>
-          </div>
+          <h3 className="text-2xl font-bold mb-2">API Oficial</h3>
+          <p className="text-sm text-white/50 mb-8">WABA homologada pela Meta.</p>
+          <ul className="space-y-3 mb-10">
+            {oficial.map((i) => (
+              <li key={i} className="flex items-center gap-3 text-sm text-white/80">
+                <div className="size-1.5 rounded-full bg-brand shrink-0" />
+                {i}
+              </li>
+            ))}
+          </ul>
+          <CtaButton className="w-full py-3 text-sm">Começar Gratuito</CtaButton>
         </div>
 
         <div className="mt-10 text-center">
@@ -630,6 +598,11 @@ function Pricing() {
           <p className="mt-4 text-sm text-white/40">
             Pacotes maiores reduzem ainda mais o valor por envio.
           </p>
+          <div className="mt-6">
+            <span className="inline-flex items-center justify-center px-4 py-2 rounded-full border border-amber-300/40 bg-amber-300/10 text-amber-200 text-sm font-semibold">
+              Para nicho Black, solicite mais informações
+            </span>
+          </div>
           <div className="mt-10">
             <CtaButton className="w-full sm:w-auto px-10 py-5 text-lg">
               Criar Conta Gratuitamente <ArrowRight className="size-5" />
@@ -788,7 +761,7 @@ function Footer() {
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-16">
           <div className="md:col-span-2 max-w-sm">
-            <Logo />
+            <Logo size="footer" />
             <p className="mt-5 text-sm text-white/40 leading-relaxed">
               Infraestrutura premium para disparos de WhatsApp em larga escala com segurança,
               estabilidade e o melhor custo-benefício do mercado.
@@ -801,7 +774,6 @@ function Footer() {
             <ul className="space-y-3 text-sm text-white/50">
               <li><a href="#solucao" className="hover:text-brand transition-colors">Solução</a></li>
               <li><a href="#apis" className="hover:text-brand transition-colors">API Oficial</a></li>
-              <li><a href="#apis" className="hover:text-brand transition-colors">API Alternativa</a></li>
               <li><a href="#preco" className="hover:text-brand transition-colors">Preço</a></li>
             </ul>
           </div>
@@ -817,22 +789,10 @@ function Footer() {
             </ul>
           </div>
         </div>
-        <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4">
+        <div className="pt-8 border-t border-white/5">
           <p className="text-xs text-white/40">
             © {new Date().getFullYear()} Drax Tecnologia. Todos os direitos reservados.
           </p>
-          <div className="flex gap-3 text-white/40">
-            {["IG", "YT", "LI", "X"].map((s) => (
-              <a
-                key={s}
-                href="#"
-                className="size-8 rounded-full border border-white/10 grid place-items-center text-[10px] font-bold hover:border-brand hover:text-brand transition-colors"
-                aria-label={s}
-              >
-                {s}
-              </a>
-            ))}
-          </div>
         </div>
       </div>
     </footer>
