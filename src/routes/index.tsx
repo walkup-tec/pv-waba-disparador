@@ -430,8 +430,8 @@ function ApiComparison() {
   const features = [
     {
       icon: LayoutTemplate,
-      title: "Templates aprovados",
-      desc: "Único formato liberado pela Meta para disparo fora da janela de 24 horas.",
+      title: "Templates oficiais META",
+      desc: "Sua mensagem com mais qualidade, dentro dos padrões oficiais, contendo Imagem + Texto + Botão.",
     },
     {
       icon: MousePointerClick,
