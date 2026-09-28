@@ -445,8 +445,8 @@ function ApiComparison() {
     },
     {
       icon: Smartphone,
-      title: "Fora do WhatsApp pessoal",
-      desc: "O disparo roda em Cloud API isolada. O chip de atendimento da empresa não entra na escala.",
+      title: "Proteção para seu número",
+      desc: "Utilizamos toda a nossa infraestrutura de disparo, isso faz com que o número de atendimento da sua empresa fique 100% protegido!",
     },
     {
       icon: ShieldCheck,
