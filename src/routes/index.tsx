@@ -9,9 +9,7 @@ import {
   Zap,
   Layers,
   TrendingUp,
-  Headphones,
   BarChart3,
-  Plug,
   Sparkles,
   Users,
   Ban,
@@ -535,9 +533,7 @@ const benefits = [
   { icon: BarChart3, title: "Gestão Centralizada", desc: "Todos os números e campanhas em um único painel." },
   { icon: TrendingUp, title: "Alta Performance", desc: "Throughput elevado e filas otimizadas." },
   { icon: Rocket, title: "Escalabilidade", desc: "Cresça do primeiro envio ao milhão sem mudar de stack." },
-  { icon: Headphones, title: "Suporte Especializado", desc: "Equipe técnica WhatsApp dedicada ao seu sucesso." },
   { icon: Gauge, title: "Relatórios Completos", desc: "Métricas em tempo real: entrega, leitura, resposta." },
-  { icon: Plug, title: "Integração Simplificada", desc: "Webhooks, API REST e conectores prontos." },
 ];
 
 function Benefits() {
