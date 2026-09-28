@@ -450,14 +450,14 @@ function ApiComparison() {
       desc: "Status delivered e read chegam no webhook da Graph, não por print de conversa.",
     },
     {
-      icon: Smartphone,
-      title: "Proteção para seu número",
-      desc: "Utilizamos toda a nossa infraestrutura de disparo, isso faz com que o número de atendimento da sua empresa fique 100% protegido!",
-    },
-    {
       icon: BarChart3,
       title: "Relatório com dados da Meta",
       desc: "Envio, entrega e leitura no mesmo painel da operação.",
+    },
+    {
+      icon: Smartphone,
+      title: "Proteção para seu número",
+      desc: "Utilizamos toda a nossa infraestrutura de disparo, isso faz com que o número de atendimento da sua empresa fique 100% protegido!",
     },
     {
       icon: TrendingUp,
@@ -492,7 +492,7 @@ function ApiComparison() {
               {features.map(({ icon: Icon, title, desc, items, footer }) => (
                 <div
                   key={title}
-                  className="group rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent p-5 hover:border-brand/30 hover:from-brand/[0.06] transition-colors"
+                  className="group h-full rounded-2xl border border-white/10 bg-gradient-to-b from-white/[0.04] to-transparent p-5 hover:border-brand/30 hover:from-brand/[0.06] transition-colors"
                 >
                   <div className="size-10 rounded-xl bg-brand/10 grid place-items-center mb-4 group-hover:bg-brand/20 transition-colors">
                     <Icon className="size-5 text-brand" strokeWidth={1.75} />
