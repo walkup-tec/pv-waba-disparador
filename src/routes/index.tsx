@@ -449,11 +449,6 @@ function ApiComparison() {
       desc: "Utilizamos toda a nossa infraestrutura de disparo, isso faz com que o número de atendimento da sua empresa fique 100% protegido!",
     },
     {
-      icon: ShieldCheck,
-      title: "Mídia no template oficial",
-      desc: "Cabeçalho com imagem, vídeo ou documento no formato que a Meta aceita no disparo.",
-    },
-    {
       icon: BarChart3,
       title: "Relatório com dados da Meta",
       desc: "Envio, entrega e leitura no mesmo painel da operação.",
